@@ -2,7 +2,6 @@ package com.horacerta.api.entities.work;
 
 import java.util.Date;
 
-import com.horacerta.api.entities.User;
 import com.horacerta.api.entities.conversion.TimeConversionInfo;
 import lombok.Data;
 
@@ -18,42 +17,6 @@ public class DailyWorkInfo {
     private boolean isDayOff;
     private boolean isVacation;
     private Date createdAt;
-
-
-    /**
-     * Calculate number of hours worked.
-     * @implNote If lunch time is bigger than 15 minutes, the exceeded lunch time should be discounted from the work time.
-     * @return int
-     */
-    public int calculateWorkHoursForToday () {
-
-//        long timeDifferenceLunch = lunchFinishedAt.getTime() - lunchStartedAt.getTime();
-//        long workedHoursDifference = finishedAt.getTime() - startedAt.getTime();
-
-//        TimeConversionInfo lunchTimerConversionInfo = _convertTimeDifference(timeDifferenceLunch);
-//        TimeConversionInfo workedTimeTimerConversionInfo = _convertTimeDifference(workedHoursDifference);
-//
-//        System.out.println("Time Difference in milliseconds: " + timeDifferenceLunch);
-//        System.out.println("Time Difference in seconds: " + lunchTimerConversionInfo);
-
-//        if (lunchTimerConversionInfo.getHours() == 0 && lunchTimerConversionInfo.getMinutes() <= 15) {
-//
-////            int lunchTime =
-//            //if ()
-//            System.out.println("less than 15min\nhours worked: "+ workedTimeTimerConversionInfo.toString());
-//
-//        } else {
-//            System.out.println("more than 15min\nhours worked: "+ workedTimeTimerConversionInfo.toString());
-//
-//        }
-        long resultHour = calculateExceedingHoursForToday(6);
-        System.out.println("Exceeding hours: "+resultHour);
-        long resultMinutes = calculateExceedingMinutesForToday(6, (int)resultHour);
-        System.out.println("Exceeding minutes: "+resultMinutes);
-        return 1;
-
-    }
-
 
     /**
      * Calculate exceeding hours for the day.
@@ -76,7 +39,7 @@ public class DailyWorkInfo {
      * @param hoursWorkedDaily int
      * @return long
      */
-    public long calculateExceedingMinutesForToday (int hoursWorkedDaily, int hoursExceeded) {
+    public long calculateExceedingMinutesForToday (int hoursWorkedDaily, long hoursExceeded) {
 
         int minutesWorkedDaily = hoursWorkedDaily * 60;
         long workedHoursDifference = finishedAt.getTime() - startedAt.getTime();

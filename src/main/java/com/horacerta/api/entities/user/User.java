@@ -1,4 +1,4 @@
-package com.horacerta.api.entities;
+package com.horacerta.api.entities.user;
 
 import lombok.Data;
 
