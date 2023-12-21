@@ -1,5 +1,6 @@
 package com.horacerta.api.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -42,7 +43,12 @@ public class User {
     private Integer hoursWorkedWeekly;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+3")
     private Date createdAt;
+
+    @Column(name = "updated_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+3")
+    private Date updatedAt;
 
     public User (){}
 
@@ -54,6 +60,7 @@ public class User {
         this.password = createUser.password;
         this.phone = createUser.phone;
         this.createdAt = new Date();
+        this.updatedAt = new Date();
         this.areaOfExpertise = null;
         this.hoursWorkedDaily = null;
         this.hoursWorkedWeekly = null;
@@ -71,6 +78,7 @@ public class User {
         this.hoursWorkedDaily = user.hoursWorkedDaily;
         this.hoursWorkedWeekly = user.hoursWorkedWeekly;
         this.createdAt = new Date();
+        this.updatedAt = new Date();
 
     }
 

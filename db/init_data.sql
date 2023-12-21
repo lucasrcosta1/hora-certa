@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS users (
     area_of_expertise VARCHAR(255),
     hours_worked_daily int,
     hours_worked_weekly int,
-    created_at timestamp NOT NULL
+    created_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS daily_work_info (
@@ -36,5 +37,6 @@ CREATE TABLE IF NOT EXISTS daily_work_info (
     is_day_off boolean NOT NULL,
     is_vacation boolean NOT NULL,
     created_at timestamp NOT NULL,
+    updated_at timestamp NOT NULL
     FOREIGN KEY (userId) REFERENCES users(id)
 );

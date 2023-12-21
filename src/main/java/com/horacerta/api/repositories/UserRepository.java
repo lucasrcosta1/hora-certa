@@ -18,8 +18,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO users (first_name, last_name, email, password, phone, created_at) " +
-            "VALUES (:firstName, :lastName, :email, :password, :phone, :createdAt) " +
+    @Query(value = "INSERT INTO users (first_name, last_name, email, password, phone, created_at, updated_at) " +
+            "VALUES (:firstName, :lastName, :email, :password, :phone, :createdAt, :updatedAt) " +
             "ON CONFLICT (email) DO NOTHING",
             nativeQuery = true)
     int registerNewUser(
@@ -28,18 +28,25 @@ public interface UserRepository extends JpaRepository<User, Integer> {
        @Param("email") String email,
        @Param("password") String password,
        @Param("phone") String phone,
-       @Param("createdAt") Date createdAt
+       @Param("createdAt") Date createdAt,
+       @Param("updatedAt") Date updatedAt
     );
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE User u SET u.areaOfExpertise = :areaOfExpertise, u.hoursWorkedDaily = :hoursWorkedDaily, u.hoursWorkedWeekly = :hoursWorkedWeekly WHERE u.id = :id")
-    int registerUserWorkInfo(
+    @Query(value = "UPDATE User u SET u.areaOfExpertise = :areaOfExpertise, u.hoursWorkedDaily = :hoursWorkedDaily, u.hoursWorkedWeekly = :hoursWorkedWeekly, u.updatedAt = :updatedAt WHERE u.id = :id")
+    int addUserExpertise(
             @Param("id") int id,
             @Param("areaOfExpertise") String areaOfExpertise,
             @Param("hoursWorkedDaily") int hoursWorkedDaily,
-            @Param("hoursWorkedWeekly") int hoursWorkedWeekly
+            @Param("hoursWorkedWeekly") int hoursWorkedWeekly,
+            @Param("updatedAt") Date updatedAt
     );
 
     List<User> findAll();
+
+    @Transactional
+    @Modifying
+    @Query("DELETE from User u where u.id = :id")
+    int deleteUserById(@Param("id") int id);
 }

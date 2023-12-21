@@ -47,7 +47,7 @@ public class UserController implements Controller {
         try {
 
             createUser.setPassword(_createPasswordHash(createUser.getPassword()));
-            if (userRepository.registerNewUser(createUser.getFirstName(), createUser.getLastName(), createUser.getEmail(), createUser.getPassword(), createUser.getPhone(), new Date()) > 0)
+            if (userRepository.registerNewUser(createUser.getFirstName(), createUser.getLastName(), createUser.getEmail(), createUser.getPassword(), createUser.getPhone(), new Date(), new Date()) > 0)
                 return ResponseEntity.ok(new SuccessResponse("User created.", "User created with success. Check your email to further steps."));
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User not created.", "User with email " + createUser.getEmail() + " was already created."));
@@ -60,16 +60,16 @@ public class UserController implements Controller {
 
 
     // TODO: 20/12/23  Send token to front-end.
-    @PutMapping(path = "/register-work-info")
-    @Operation(summary = "Register user's work info.", method = "PUT")
+    @PutMapping(path = "/add-expertise")
+    @Operation(summary = "Add user expertise.", method = "PUT")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Work info registered with success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "200", description = "User expertise registered with success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> registerUserWorkInfo (@Valid @RequestBody UserWorkInfo userWorkInfo) {
+    public ResponseEntity<Object> addUserExpertise (@Valid @RequestBody UserWorkInfo userWorkInfo) {
 
-        if (userRepository.registerUserWorkInfo(userWorkInfo.getId(), userWorkInfo.getAreaOfExpertise(), userWorkInfo.getHoursWorkedDaily(), userWorkInfo.getHoursWorkedWeekly()) > 0)
-            return ResponseEntity.ok(new SuccessResponse("User's work information registered.", "User work info was registered with success. You may now use the app."));
+        if (userRepository.addUserExpertise(userWorkInfo.getId(), userWorkInfo.getAreaOfExpertise(), userWorkInfo.getHoursWorkedDaily(), userWorkInfo.getHoursWorkedWeekly(), new Date()) > 0)
+            return ResponseEntity.ok(new SuccessResponse("User's work expertise registered.", "User's work expertise registered with success. You may now use the app."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id " + userWorkInfo.getId() + " was not found."));
 
@@ -84,11 +84,34 @@ public class UserController implements Controller {
     }
 
 
-    @GetMapping("/filter-by-email")
-    public User getUserByGivenEmail (@RequestParam String email) {
+    @GetMapping("/find-by-email")
+    @Operation(summary = "Find user by given email.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<Object> getUserByGivenEmail (@RequestParam String email) {
 
-        return userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
+        if (user != null)
+            return ResponseEntity.ok(user);
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with email: " + email + " wasn't found."));
+    }
 
+
+    @DeleteMapping("/remove")
+    @Operation(summary = "Remove user by given email.", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User removed.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<Object> removeUserByGivenEmail (@RequestParam int userId) {
+
+        if (userRepository.deleteUserById(userId) > 0)
+            return ResponseEntity.ok(new SuccessResponse("User removed.", "User id: " + userId + " removed successfuly."));
+        else
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id: " + userId + " wasn't found."));
     }
 
     private String _createPasswordHash(String password) throws NoSuchAlgorithmException {
