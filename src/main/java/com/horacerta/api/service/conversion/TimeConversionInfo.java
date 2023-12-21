@@ -1,4 +1,4 @@
-package com.horacerta.api.entities.conversion;
+package com.horacerta.api.service.conversion;
 
 import lombok.Data;
 

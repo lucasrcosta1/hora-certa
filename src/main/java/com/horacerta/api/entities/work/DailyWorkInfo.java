@@ -2,7 +2,7 @@ package com.horacerta.api.entities.work;
 
 import java.util.Date;
 
-import com.horacerta.api.entities.conversion.TimeConversionInfo;
+import com.horacerta.api.service.conversion.TimeConversionInfo;
 import lombok.Data;
 
 @Data
