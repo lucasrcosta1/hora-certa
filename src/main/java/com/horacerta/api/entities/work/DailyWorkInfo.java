@@ -3,20 +3,47 @@ package com.horacerta.api.entities.work;
 import java.util.Date;
 
 import com.horacerta.api.service.conversion.TimeConversionInfo;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
+@Entity
+@Table(name = "daily_work_info", schema = "public")
 public class DailyWorkInfo {
 
+    @Id
+    @Column(name = "id")
     private int  id;
+
+    @Column(name = "user_id")
     private int userId;
+
+    @Column(name = "started_at")
     private Date startedAt;
+
+    @Column(name = "finished_at")
     private Date finishedAt;
+
+    @Column(name = "lunch_started_at")
     private Date lunchStartedAt;
+
+    @Column(name = "lunch_finished_at")
     private Date lunchFinishedAt;
+
+    @Column(name = "is_day_off")
     private boolean isDayOff;
+
+    @Column(name = "is_vacation")
     private boolean isVacation;
+
+    @Column(name = "created_at")
     private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     /**
      * Calculate exceeding hours for the day.

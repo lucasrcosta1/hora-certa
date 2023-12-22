@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS daily_work_info (
     id SERIAL PRIMARY KEY,
-    userId int NOT NULL,
+    user_id int NOT NULL,
     started_at timestamp NOT NULL,
     finished_at timestamp NOT NULL,
     lunch_started_at timestamp NOT NULL,
@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS daily_work_info (
     is_day_off boolean NOT NULL,
     is_vacation boolean NOT NULL,
     created_at timestamp NOT NULL,
-    updated_at timestamp NOT NULL
-    FOREIGN KEY (userId) REFERENCES users(id)
+    updated_at timestamp NOT NULL,
+    UNIQUE (user_id, started_at),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
