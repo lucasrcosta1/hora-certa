@@ -3,6 +3,7 @@ package com.horacerta.api.controllers;
 import com.horacerta.api.entities.response.ErrorResponse;
 import com.horacerta.api.entities.response.SuccessResponse;
 import com.horacerta.api.entities.user.CreateUser;
+import com.horacerta.api.entities.user.UpdateUser;
 import com.horacerta.api.entities.user.User;
 import com.horacerta.api.entities.user.UserWorkInfo;
 import com.horacerta.api.repositories.UserRepository;
@@ -22,10 +23,12 @@ import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+// TODO: 21/12/2023 Request token on header for all user's request, besides login and register.
 @RestController
 @RequestMapping("/user")
-public class UserController implements Controller {
+public class UserController {
 
     UserRepository userRepository;
 
@@ -112,6 +115,37 @@ public class UserController implements Controller {
             return ResponseEntity.ok(new SuccessResponse("User removed.", "User id: " + userId + " removed successfuly."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id: " + userId + " wasn't found."));
+    }
+
+    @PutMapping(path = "/update", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @Operation(summary = "Update user.", method = "PUT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<Object> updateUser (@Valid @ModelAttribute UpdateUser updatedUser) {
+
+        Optional<User> optionalUser = userRepository.findById(updatedUser.getId());
+        if (optionalUser.isPresent()) {
+
+            User user = optionalUser.get();
+            if (!updatedUser.getPassword().isBlank() && !user.getPassword().equals(updatedUser.getPassword())) {
+                try {
+                    user.setPassword(_createPasswordHash(updatedUser.getPassword()));
+                } catch (NoSuchAlgorithmException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Server error.", "An internal error ocurred."));
+                }
+            }
+            user.updateUserInfo(updatedUser);
+            if (userRepository.updateUser(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), user.getPhone(), user.getAreaOfExpertise(), user.getHoursWorkedDaily(), user.getHoursWorkedWeekly(), user.getUpdatedAt()) > 0)
+                return ResponseEntity.ok(new SuccessResponse("User's information updated.", "User's information updated with success."));
+
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id: " + updatedUser.getId() + " wasn't found."));
+
+
+
     }
 
     private String _createPasswordHash(String password) throws NoSuchAlgorithmException {
