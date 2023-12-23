@@ -39,7 +39,7 @@ public class UserController {
 
     // TODO: 20/12/23  Send e-mail to the user registered.
     @PostMapping(path = "/create", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-    @Operation(summary = "Create a new user", method = "POST")
+    @Operation(summary = "Create user", method = "POST")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully created ", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "409", description = "User was created already", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
@@ -58,7 +58,7 @@ public class UserController {
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Hash couldn't be created: "+ e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Server error.", "An internal error ocurred."));
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Server error.", "An internal error occurred."));
     }
 
 
@@ -111,7 +111,7 @@ public class UserController {
     public ResponseEntity<Object> removeUserByGivenEmail (@RequestParam int userId) {
 
         if (userRepository.deleteUserById(userId) > 0)
-            return ResponseEntity.ok(new SuccessResponse("User removed.", "User id: " + userId + " removed successfuly."));
+            return ResponseEntity.ok(new SuccessResponse("User removed.", "User id: " + userId + " removed successfully."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id: " + userId + " wasn't found."));
     }
@@ -133,7 +133,7 @@ public class UserController {
                 try {
                     user.setPassword(_createPasswordHash(updatedUser.getPassword()));
                 } catch (NoSuchAlgorithmException e) {
-                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Server error.", "An internal error ocurred."));
+                    return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Server error.", "An internal error occurred."));
                 }
             }
             user.updateUserInfo(updatedUser);
@@ -153,22 +153,6 @@ public class UserController {
         return HashPwd.bytesToHex(hashPwd.getHashbytes());
 
     }
-
-
-
-
-//    @PostMapping("/auth/remove")
-//    @Operation(summary = "Create a new user", method = "POST")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "User was created, check your email to further steps", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
-//            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-//            @ApiResponse(responseCode = "500", description = "Erro interno no servidor", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-//    })
-//    public ResponseEntity<Object> removeUser (@RequestParam String token, @RequestParam String id) {
-//
-//        System.out.println("Should remove user received through parameters if token is real: ");
-//        return null;
-//    }
 
 }
 

@@ -20,7 +20,7 @@ public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
     @Transactional
     @Modifying
     @Query("SELECT d FROM DailyWorkInfo d WHERE d.userId = :userId")
-    List<DailyWorkInfo> findAllUserOccurences(@Param("userId") int userId);
+    List<DailyWorkInfo> findAllUserOccurrences(@Param("userId") int userId);
 
     @Transactional
     @Modifying
