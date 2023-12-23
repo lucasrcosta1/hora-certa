@@ -1,8 +1,10 @@
 package com.horacerta.api.entities.work;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
-import com.horacerta.api.service.conversion.TimeConversionInfo;
+import com.horacerta.api.auxiliary.conversion.TimeConversionInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -22,7 +24,7 @@ public class DailyWorkInfo {
     private int userId;
 
     @Column(name = "started_at")
-    private Date startedAt;
+        private Date startedAt;
 
     @Column(name = "finished_at")
     private Date finishedAt;
@@ -77,17 +79,38 @@ public class DailyWorkInfo {
     }
 
     /**
+     * Calculate the duration between startedAt and finishedAt
+     * @return Duration
+     */
+    public Duration calculateDuration(Date start, Date end) {
+        Instant startedInstant = start.toInstant();
+        Instant finishedInstant = end.toInstant();
+
+        return Duration.between(startedInstant, finishedInstant);
+
+    }
+
+    public TimeConversionInfo getDurationDetails(Duration duration) {
+        long days = duration.toDays();
+        long hours = duration.toHoursPart();
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
+
+        return new TimeConversionInfo(seconds, minutes, hours, days);
+    }
+
+    /**
      * Convert the time difference.
-     * @param timeDifferenceLunch long
+     * @param timeDifference long
      * @return TimeConversionInfo
      */
-    private TimeConversionInfo _convertTimeDifference(long timeDifferenceLunch) {
+    private TimeConversionInfo _convertTimeDifference(long timeDifference) {
 
-        long secondsLunch = timeDifferenceLunch / 1000;
-        long minutesLunch = secondsLunch / 60;
-        long hoursLunch = minutesLunch / 60;
-        long daysLunch = hoursLunch / 24;
-        return new TimeConversionInfo(secondsLunch, minutesLunch, hoursLunch, daysLunch);
+        long seconds = timeDifference / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        return new TimeConversionInfo(seconds, minutes, hours, days);
 
     }
 }

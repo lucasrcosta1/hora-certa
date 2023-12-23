@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "VALUES (:firstName, :lastName, :email, :password, :phone, :createdAt, :updatedAt) " +
             "ON CONFLICT (email) DO NOTHING",
             nativeQuery = true)
-    int registerNewUser(
+    int register (
        @Param("firstName") String firstName,
        @Param("lastName") String lastName,
        @Param("email") String email,
@@ -35,7 +35,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Modifying
     @Query(value = "UPDATE User u SET u.areaOfExpertise = :areaOfExpertise, u.hoursWorkedDaily = :hoursWorkedDaily, u.hoursWorkedWeekly = :hoursWorkedWeekly, u.updatedAt = :updatedAt WHERE u.id = :id")
-    int addUserExpertise(
+    int addExpertise(
             @Param("id") int id,
             @Param("areaOfExpertise") String areaOfExpertise,
             @Param("hoursWorkedDaily") int hoursWorkedDaily,
@@ -48,7 +48,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE from User u where u.id = :id")
-    int deleteUserById(@Param("id") int id);
+    int deleteById (@Param("id") int id);
 
     @Transactional
     @Modifying
@@ -65,15 +65,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             "u.updatedAt = :updatedAt " +
             "WHERE u.id = :id"
     )
-    int updateUser(@Param("id") int id,
-                   @Param("firstName") String firstName,
-                   @Param("lastName") String lastName,
-                   @Param("email") String email,
-                   @Param("password") String password,
-                   @Param("phone") String phone,
-                   @Param("areaOfExpertise") String areaOfExpertise,
-                   @Param("hoursWorkedDaily") int hoursWorkedDaily,
-                   @Param("hoursWorkedWeekly") int hoursWorkedWeekly,
-                   @Param("updatedAt") Date updatedAt
+    int update (
+       @Param("id") int id,
+       @Param("firstName") String firstName,
+       @Param("lastName") String lastName,
+       @Param("email") String email,
+       @Param("password") String password,
+       @Param("phone") String phone,
+       @Param("areaOfExpertise") String areaOfExpertise,
+       @Param("hoursWorkedDaily") int hoursWorkedDaily,
+       @Param("hoursWorkedWeekly") int hoursWorkedWeekly,
+       @Param("updatedAt") Date updatedAt
     );
 }

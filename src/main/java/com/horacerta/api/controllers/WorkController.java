@@ -41,9 +41,9 @@ public class WorkController {
             @ApiResponse(responseCode = "404", description = "User not found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Server internal error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> getAllWorkRegistryForUser (int userId) {
+    public ResponseEntity<Object> getAllRegistry (int userId) {
 
-        return ResponseEntity.ok(workRepository.findAllUserOccurrences(userId));
+        return ResponseEntity.ok(workRepository.findAll(userId));
 
     }
 
@@ -56,11 +56,11 @@ public class WorkController {
             @ApiResponse(responseCode = "404", description = "User not found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Server internal error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> checkInAtWork (@Valid @RequestBody CheckInAtWork checkInAtWork) {
+    public ResponseEntity<Object> checkIn (@Valid @RequestBody CheckInAtWork checkInAtWork) {
 
         try {
 
-            int registerQueryResponse = workRepository.registerDailyWork(
+            int registerQueryResponse = workRepository.register(
                 checkInAtWork.getUserId(),
                 addHoursToDate(checkInAtWork.getStartedAt(), 3),
                 addHoursToDate(checkInAtWork.getFinishedAt(), 3),
@@ -97,13 +97,13 @@ public class WorkController {
             @ApiResponse(responseCode = "404", description = "User not found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Server internal error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> checkInMultipleDaysAtWork (@Valid @RequestBody CheckInAtWork[] checkInAtWorkDays) {
+    public ResponseEntity<Object> checkInMultipleDays (@Valid @RequestBody CheckInAtWork[] checkInAtWorkDays) {
 
         int i = 0;
         for (CheckInAtWork checkInAtWork: checkInAtWorkDays) {
             try {
 
-                int registerQueryResponse = workRepository.registerDailyWork(
+                int registerQueryResponse = workRepository.register(
                         checkInAtWork.getUserId(),
                         addHoursToDate(checkInAtWork.getStartedAt(), 3),
                         addHoursToDate(checkInAtWork.getFinishedAt(), 3),
@@ -141,13 +141,13 @@ public class WorkController {
             @ApiResponse(responseCode = "404", description = "Work day not found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "500", description = "Server internal error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> checkInAtWork (@Valid @RequestParam int dailyWorkedId, @Valid @RequestBody CheckInAtWork checkInAtWork) {
+    public ResponseEntity<Object> update (@Valid @RequestParam int dailyWorkedId, @Valid @RequestBody CheckInAtWork checkInAtWork) {
 
         Optional<DailyWorkInfo> optionalDailyWorkInfo = workRepository.findById(dailyWorkedId);
         if (optionalDailyWorkInfo.isPresent()) {
 
             DailyWorkInfo dailyWorkInfo = optionalDailyWorkInfo.get();
-            if (workRepository.updateDailyWorkInfo(
+            if (workRepository.update(
                 dailyWorkedId,
                 checkInAtWork.getUserId(),
                 addHoursToDate(checkInAtWork.getStartedAt(), 3),
@@ -174,9 +174,9 @@ public class WorkController {
             @ApiResponse(responseCode = "200", description = "Work day removed.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "Work day not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> removeWorkedDay (@RequestParam int workDayId) {
+    public ResponseEntity<Object> remove (@RequestParam int workDayId) {
 
-        if (workRepository.removeDailyWorkInfo(workDayId) > 0)
+        if (workRepository.remove(workDayId) > 0)
             return ResponseEntity.ok(new SuccessResponse("Work day removed.", "Work day id: " + workDayId + " removed successfully."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Work day not found.", "Work day with id: " + workDayId + " wasn't found."));
@@ -188,12 +188,12 @@ public class WorkController {
             @ApiResponse(responseCode = "200", description = "Work days removed.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "Work days not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> removeMultipleWorkedDay (@RequestParam int[] workDayIds) {
+    public ResponseEntity<Object> removeMultiple (@RequestParam int[] workDayIds) {
 
         int numberOfSuccessfulRemoval = 0;
         for (int workDayId : workDayIds) {
 
-            if (workRepository.removeDailyWorkInfo(workDayId) > 0) {
+            if (workRepository.remove(workDayId) > 0) {
                 if (numberOfSuccessfulRemoval == workDayIds.length - 1)
                     return ResponseEntity.ok(new SuccessResponse("Work days removed.", workDayIds.length + " work days removed successfully."));
                 numberOfSuccessfulRemoval++;

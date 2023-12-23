@@ -1,4 +1,4 @@
-package com.horacerta.api.service.hashPwd;
+package com.horacerta.api.auxiliary.hashPwd;
 
 import lombok.Data;
 

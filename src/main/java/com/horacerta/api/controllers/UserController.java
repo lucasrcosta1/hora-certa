@@ -7,7 +7,7 @@ import com.horacerta.api.entities.user.UpdateUser;
 import com.horacerta.api.entities.user.User;
 import com.horacerta.api.entities.user.UserWorkInfo;
 import com.horacerta.api.repositories.UserRepository;
-import com.horacerta.api.service.hashPwd.HashPwd;
+import com.horacerta.api.auxiliary.hashPwd.HashPwd;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -45,12 +45,12 @@ public class UserController {
             @ApiResponse(responseCode = "409", description = "User was created already", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "502", description = "Server internal error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> createUser (@Valid @ModelAttribute CreateUser createUser) {
+    public ResponseEntity<Object> create (@Valid @ModelAttribute CreateUser createUser) {
 
         try {
 
             createUser.setPassword(_createPasswordHash(createUser.getPassword()));
-            if (userRepository.registerNewUser(createUser.getFirstName(), createUser.getLastName(), createUser.getEmail(), createUser.getPassword(), createUser.getPhone(), new Date(), new Date()) > 0)
+            if (userRepository.register(createUser.getFirstName(), createUser.getLastName(), createUser.getEmail(), createUser.getPassword(), createUser.getPhone(), new Date(), new Date()) > 0)
                 return ResponseEntity.ok(new SuccessResponse("User created.", "User created with success. Check your email to further steps."));
             else
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User not created.", "User with email " + createUser.getEmail() + " was already created."));
@@ -69,9 +69,9 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User expertise registered with success.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> addUserExpertise (@Valid @RequestBody UserWorkInfo userWorkInfo) {
+    public ResponseEntity<Object> addExpertise (@Valid @RequestBody UserWorkInfo userWorkInfo) {
 
-        if (userRepository.addUserExpertise(userWorkInfo.getId(), userWorkInfo.getAreaOfExpertise(), userWorkInfo.getHoursWorkedDaily(), userWorkInfo.getHoursWorkedWeekly(), new Date()) > 0)
+        if (userRepository.addExpertise(userWorkInfo.getId(), userWorkInfo.getAreaOfExpertise(), userWorkInfo.getHoursWorkedDaily(), userWorkInfo.getHoursWorkedWeekly(), new Date()) > 0)
             return ResponseEntity.ok(new SuccessResponse("User's work expertise registered.", "User's work expertise registered with success. You may now use the app."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id " + userWorkInfo.getId() + " was not found."));
@@ -80,7 +80,7 @@ public class UserController {
 
 
     @GetMapping("/all")
-    public List<User> getAllUsers () {
+    public List<User> getAll () {
 
         return userRepository.findAll();
 
@@ -93,7 +93,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> getUserByGivenEmail (@RequestParam String email) {
+    public ResponseEntity<Object> getByGivenEmail (@RequestParam String email) {
 
         User user = userRepository.findByEmail(email);
         if (user != null)
@@ -108,9 +108,9 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "User removed.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Object> removeUserByGivenEmail (@RequestParam int userId) {
+    public ResponseEntity<Object> removeByGivenEmail (@RequestParam int userId) {
 
-        if (userRepository.deleteUserById(userId) > 0)
+        if (userRepository.deleteById(userId) > 0)
             return ResponseEntity.ok(new SuccessResponse("User removed.", "User id: " + userId + " removed successfully."));
         else
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with id: " + userId + " wasn't found."));
@@ -123,7 +123,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Bad request.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
     })
-    public ResponseEntity<Object> updateUser (@Valid @ModelAttribute UpdateUser updatedUser) {
+    public ResponseEntity<Object> update (@Valid @ModelAttribute UpdateUser updatedUser) {
 
         Optional<User> optionalUser = userRepository.findById(updatedUser.getId());
         if (optionalUser.isPresent()) {
@@ -137,7 +137,7 @@ public class UserController {
                 }
             }
             user.updateUserInfo(updatedUser);
-            if (userRepository.updateUser(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), user.getPhone(), user.getAreaOfExpertise(), user.getHoursWorkedDaily(), user.getHoursWorkedWeekly(), user.getUpdatedAt()) > 0)
+            if (userRepository.update(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword(), user.getPhone(), user.getAreaOfExpertise(), user.getHoursWorkedDaily(), user.getHoursWorkedWeekly(), user.getUpdatedAt()) > 0)
                 return ResponseEntity.ok(new SuccessResponse("User's information updated.", "User's information updated with success."));
 
         }

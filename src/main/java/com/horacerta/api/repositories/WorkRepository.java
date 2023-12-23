@@ -15,12 +15,8 @@ import java.util.List;
 @Repository
 public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
 
-    List<DailyWorkInfo> findAll();
-
-    @Transactional
-    @Modifying
     @Query("SELECT d FROM DailyWorkInfo d WHERE d.userId = :userId")
-    List<DailyWorkInfo> findAllUserOccurrences(@Param("userId") int userId);
+    List<DailyWorkInfo> findAll (@Param("userId") int userId);
 
     @Transactional
     @Modifying
@@ -37,7 +33,7 @@ public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
         ") " +
         "ON CONFLICT (user_id, started_at) DO NOTHING;",  nativeQuery = true
     )
-    int registerDailyWork(
+    int register (
         @Param("userId") int userId,
         @Param("startedAt") Date startedAt,
         @Param("finishedAt") Date finishedAt,
@@ -63,7 +59,7 @@ public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
             "d.updatedAt = :updatedAt " +
             "WHERE d.id = :id"
     )
-    int updateDailyWorkInfo(
+    int update (
         @Param("id") int id,
         @Param("userId") int userId,
         @Param("startedAt") Date startedAt,
@@ -78,5 +74,5 @@ public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE from DailyWorkInfo d where d.id = :id")
-    int removeDailyWorkInfo(@Param("id") int id);
+    int remove (@Param("id") int id);
 }
