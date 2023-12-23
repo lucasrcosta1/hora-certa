@@ -102,9 +102,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("User not found.", "User with email: " + email + " wasn't found."));
     }
 
-
     @DeleteMapping("/remove")
-    @Operation(summary = "Remove user by given email.", method = "GET")
+    @Operation(summary = "Remove user by given id.", method = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User removed.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SuccessResponse.class))),
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))

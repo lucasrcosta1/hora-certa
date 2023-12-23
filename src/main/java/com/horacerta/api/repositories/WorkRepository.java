@@ -24,30 +24,59 @@ public interface WorkRepository extends JpaRepository<DailyWorkInfo, Integer> {
 
     @Transactional
     @Modifying
-//    @Query(value = "INSERT INTO daily_work_info (user_id, started_at, finished_at, lunch_started_at, lunch_finished_at, is_day_off, is_vacation, created_at, updated_at) " +
-//            "VALUES (:userId, :startedAt, :finishedAt, :lunchStartedAt, :lunchFinishedAt, :isDayOff, :isVacation, :createdAt, :updatedAt) ",
-//            nativeQuery = true)
-    @Query(value = "INSERT INTO daily_work_info (\n" +
-            "    user_id, started_at, finished_at,\n" +
-            "    lunch_started_at, lunch_finished_at,\n" +
-            "    is_day_off, is_vacation, created_at, updated_at\n" +
-            ")\n" +
-            "VALUES (\n" +
-            "    :userId, :startedAt, :finishedAt,\n" +
-            "    :lunchStartedAt, :lunchFinishedAt,\n" +
-            "    :isDayOff, :isVacation, :createdAt, :updatedAt\n" +
-            ")\n" +
-            "ON CONFLICT (user_id, started_at) DO NOTHING;",  nativeQuery = true
+    @Query(value =
+        "INSERT INTO daily_work_info (" +
+            "user_id, started_at, finished_at," +
+            "lunch_started_at, lunch_finished_at," +
+            "is_day_off, is_vacation, created_at, updated_at" +
+        ") " +
+        "VALUES (" +
+        "    :userId, :startedAt, :finishedAt," +
+        "    :lunchStartedAt, :lunchFinishedAt," +
+        "    :isDayOff, :isVacation, :createdAt, :updatedAt" +
+        ") " +
+        "ON CONFLICT (user_id, started_at) DO NOTHING;",  nativeQuery = true
     )
     int registerDailyWork(
-            @Param("userId") int userId,
-            @Param("startedAt") Date startedAt,
-            @Param("finishedAt") Date finishedAt,
-            @Param("lunchStartedAt") Date lunchStartedAt,
-            @Param("lunchFinishedAt") Date lunchFinishedAt,
-            @Param("isDayOff") boolean isDayOff,
-            @Param("isVacation") boolean isVacation,
-            @Param("createdAt") Date createdAt,
-            @Param("updatedAt") Date updatedAt
+        @Param("userId") int userId,
+        @Param("startedAt") Date startedAt,
+        @Param("finishedAt") Date finishedAt,
+        @Param("lunchStartedAt") Date lunchStartedAt,
+        @Param("lunchFinishedAt") Date lunchFinishedAt,
+        @Param("isDayOff") boolean isDayOff,
+        @Param("isVacation") boolean isVacation,
+        @Param("createdAt") Date createdAt,
+        @Param("updatedAt") Date updatedAt
     );
+
+    @Transactional
+    @Modifying
+    @Query(value =
+        "UPDATE DailyWorkInfo d SET " +
+            "d.userId = :userId, " +
+            "d.startedAt = :startedAt, " +
+            "d.finishedAt = :finishedAt, " +
+            "d.lunchStartedAt = :lunchStartedAt, " +
+            "d.lunchFinishedAt = :lunchFinishedAt, " +
+            "d.isDayOff = :isDayOff, " +
+            "d.isVacation = :isVacation, " +
+            "d.updatedAt = :updatedAt " +
+            "WHERE d.id = :id"
+    )
+    int updateDailyWorkInfo(
+        @Param("id") int id,
+        @Param("userId") int userId,
+        @Param("startedAt") Date startedAt,
+        @Param("finishedAt") Date finishedAt,
+        @Param("lunchStartedAt") Date lunchStartedAt,
+        @Param("lunchFinishedAt") Date lunchFinishedAt,
+        @Param("isDayOff") boolean isDayOff,
+        @Param("isVacation") boolean isVacation,
+        @Param("updatedAt") Date updatedAt
+    );
+
+    @Transactional
+    @Modifying
+    @Query("DELETE from DailyWorkInfo d where d.id = :id")
+    int removeDailyWorkInfo(@Param("id") int id);
 }
