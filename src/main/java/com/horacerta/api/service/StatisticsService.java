@@ -34,11 +34,11 @@ public class StatisticsService {
 
     }
 
-    public Date oneWeekFrom (Date date) {
+    public Date subtractDays(Date date, int days) {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.WEEK_OF_YEAR, -1);
+        calendar.add(Calendar.DAY_OF_YEAR, -days);
         return calendar.getTime();
 
     }
