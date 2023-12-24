@@ -10,6 +10,14 @@ public class StatisticsResponse {
     private TimeConversionInfo workedHours;
     private TimeConversionInfo missingOrAccumulatedHours;
 
+    public StatisticsResponse () {}
+
+    public StatisticsResponse (ChosenRange chosenRange) {
+        this.chosenRange = chosenRange;
+        this.workedHours = new TimeConversionInfo();
+        this.missingOrAccumulatedHours = new TimeConversionInfo();
+    }
+
     public StatisticsResponse (ChosenRange chosenRange, TimeConversionInfo workedHours, TimeConversionInfo missingOrAccumulatedHours) {
         this.chosenRange = chosenRange;
         this.workedHours = workedHours;

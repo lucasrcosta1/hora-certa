@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface StatisticsRepository extends JpaRepository<DailyWorkInfo, Integer> {
@@ -17,6 +18,7 @@ public interface StatisticsRepository extends JpaRepository<DailyWorkInfo, Integ
     @Query("SELECT d FROM DailyWorkInfo d WHERE d.userId = :userId AND CAST(d.startedAt AS date) = CAST(:day AS date)")
     public DailyWorkInfo findUserWorkByGivenDay(@Param("userId") int userId, @Param("day") Date day);
 
-//    public List<DailyWorkInfo> findUserWorkByGivenInterval (@Param("userId") int userId, @Param("start") Date start, @Param("end") Date end);
+    @Query("SELECT d FROM DailyWorkInfo d WHERE d.userId = :userId AND CAST(d.startedAt AS date) BETWEEN CAST(:start AS date) AND CAST(:end AS date)")
+    public Set<DailyWorkInfo> findUserWorkByGivenInterval (@Param("userId") int userId, @Param("start") Date start, @Param("end") Date end);
 
 }

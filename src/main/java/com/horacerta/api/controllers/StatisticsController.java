@@ -1,6 +1,7 @@
 package com.horacerta.api.controllers;
 
 import com.horacerta.api.entities.response.ErrorResponse;
+import com.horacerta.api.entities.statistics.ChosenRange;
 import com.horacerta.api.entities.statistics.StatisticsResponse;
 import com.horacerta.api.entities.work.DailyWorkInfo;
 import com.horacerta.api.repositories.StatisticsRepository;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/statistics")
@@ -45,16 +49,39 @@ public class StatisticsController {
     })
     public ResponseEntity<Object> day (int userId) {
 
-        System.out.println(new Date());
-        DailyWorkInfo userWorkRegistry = this.statisticsRepository.findUserWorkByGivenDay(userId, new Date());
-        if (userWorkRegistry != null) {
-            StatisticsResponse statisticsResponse = this.statisticsService.getDayWorkInfo(userWorkRegistry);
+        DailyWorkInfo workDay = this.statisticsRepository.findUserWorkByGivenDay(userId, new Date());
+        if (workDay != null) {
+            StatisticsResponse statisticsResponse = this.statisticsService.getDailyStatistics(workDay);
             if (statisticsResponse != null) {
                 return ResponseEntity.ok(statisticsResponse);
             }
             System.err.println("day endpoint-> Condition not predicted - ");
             return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Internal server error.", "An error occurred, please try again later."));
         } return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Work information not found.", "There is no work registry today for the user with id: "+ userId+"."));
+    }
+
+    @GetMapping("/week")
+    @Operation(summary = "Get this week's work information", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Work information retrieved.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = StatisticsResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Work information not found.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+    })
+    public ResponseEntity<Object> week (int userId) {
+
+        Date start = this.statisticsService.oneWeekFrom(new Date()), end = new Date();
+        Set<DailyWorkInfo> workDays = this.statisticsRepository.findUserWorkByGivenInterval(userId, start, end);
+        if (!workDays.isEmpty()) {
+
+            StatisticsResponse statisticsResponse = this.statisticsService.getIntervalStatistics(ChosenRange.WEEK, workDays);
+            if (statisticsResponse != null) {
+                return ResponseEntity.ok(statisticsResponse);
+            } else {
+                System.err.println("week endpoint-> Condition not predicted - ");
+                return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(new ErrorResponse("Internal server error.", "An error occurred, please try again later."));
+            }
+
+        } return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Work information not found.", "There is no work registry one week from now for the user with id: "+ userId+"."));
+
     }
 
 
