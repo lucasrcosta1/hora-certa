@@ -2,6 +2,7 @@ package com.horacerta.api.repositories;
 
 import com.horacerta.api.entities.user.User;
 import com.horacerta.api.entities.work.DailyWorkInfo;
+import jakarta.annotation.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

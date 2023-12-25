@@ -60,12 +60,21 @@ public class WorkController {
 
         try {
 
+            Date lunchStartedAt = checkInAtWork.getLunchStartedAt();
+            Date lunchFinishedAt = checkInAtWork.getLunchFinishedAt();
+            if (lunchStartedAt != null) {
+                lunchStartedAt = addHoursToDate(lunchStartedAt, 3);
+            }
+            if (lunchFinishedAt != null) {
+                lunchFinishedAt = addHoursToDate(lunchFinishedAt, 3);
+            }
+
             int registerQueryResponse = workRepository.register(
                 checkInAtWork.getUserId(),
                 addHoursToDate(checkInAtWork.getStartedAt(), 3),
                 addHoursToDate(checkInAtWork.getFinishedAt(), 3),
-                addHoursToDate(checkInAtWork.getLunchStartedAt(), 3),
-                addHoursToDate(checkInAtWork.getLunchFinishedAt(), 3),
+                lunchStartedAt,
+                lunchFinishedAt,
                 checkInAtWork.isDayOff(),
                 checkInAtWork.isVacation(),
                 new Date(),

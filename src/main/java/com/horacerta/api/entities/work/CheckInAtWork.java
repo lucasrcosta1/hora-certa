@@ -30,13 +30,11 @@ public class CheckInAtWork {
     private Date finishedAt;
 
     @Valid
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+3")
     @Schema(type = "string", pattern = "yyyy-MM-dd HH:mm:ss", example = "yyyy-MM-dd HH:mm:ss")
     private Date lunchStartedAt;
 
     @Valid
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+3")
     @Schema(type = "string", pattern = "yyyy-MM-dd HH:mm:ss", example = "yyyy-MM-dd HH:mm:ss")
     private Date lunchFinishedAt;

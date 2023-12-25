@@ -5,10 +5,7 @@ import java.time.Instant;
 import java.util.Date;
 
 import com.horacerta.api.auxiliary.conversion.TimeConversionInfo;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -24,15 +21,17 @@ public class DailyWorkInfo {
     private int userId;
 
     @Column(name = "started_at")
-        private Date startedAt;
+    private Date startedAt;
 
     @Column(name = "finished_at")
     private Date finishedAt;
 
-    @Column(name = "lunch_started_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lunch_started_at", nullable = true)
     private Date lunchStartedAt;
 
-    @Column(name = "lunch_finished_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "lunch_finished_at", nullable = true)
     private Date lunchFinishedAt;
 
     @Column(name = "is_day_off")

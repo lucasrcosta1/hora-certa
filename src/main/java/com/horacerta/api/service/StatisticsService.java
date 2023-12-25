@@ -26,11 +26,40 @@ public class StatisticsService {
 
     public StatisticsResponse getDailyStatistics (DailyWorkInfo workday) {
 
+        TimeConversionInfo missingOrAccumulatedTime =  this.checkWhetherVacationOrDayOff(workday);
         return new StatisticsResponse(
             ChosenRange.DAY,
-            this.calculateWorkTime(workday),
-            this.calculateMissingOrAccumulatedTime(workday)
+            workday.isDayOff() ? new TimeConversionInfo() : this.calculateWorkTime(workday),
+            missingOrAccumulatedTime
         );
+
+    }
+
+    private TimeConversionInfo checkWhetherVacationOrDayOff(DailyWorkInfo workday) {
+
+        if (workday.isDayOff()) {
+
+            return new TimeConversionInfo(0,0,0,-1);
+
+        } else if (workday.isVacation()) {
+
+            int vacationDays = this.howManyVacationDays(workday);
+            return new TimeConversionInfo(0,0,0, vacationDays);
+
+        } else {
+
+            return this.calculateMissingOrAccumulatedTime(workday);
+
+        }
+
+    }
+
+    private int howManyVacationDays(DailyWorkInfo workday) {
+
+        int entireDay = 1;
+        Duration vacationDuration = workday.calculateDuration(workday.getStartedAt(), workday.getFinishedAt());
+        TimeConversionInfo vacationTime = workday.getDurationDetails(vacationDuration);
+        return - ((int)vacationTime.getDays() + entireDay);
 
     }
 
@@ -50,8 +79,9 @@ public class StatisticsService {
 
             if (workDay != null) {
 
-                statisticsResponse.setWorkedHours(this.addTime(statisticsResponse.getWorkedHours(), this.calculateWorkTime(workDay)));
-                statisticsResponse.setMissingOrAccumulatedHours(this.addTime(statisticsResponse.getMissingOrAccumulatedHours(), this.calculateMissingOrAccumulatedTime(workDay)));
+                TimeConversionInfo missingOrAccumulatedTime =  this.checkWhetherVacationOrDayOff(workDay);
+                statisticsResponse.setWorkedHours(this.addTime(statisticsResponse.getWorkedHours(), (workDay.isDayOff() || workDay.isVacation()) ? new TimeConversionInfo() : this.calculateWorkTime(workDay)));
+                statisticsResponse.setMissingOrAccumulatedHours(this.addTime(statisticsResponse.getMissingOrAccumulatedHours(), missingOrAccumulatedTime));
 
             } else { return null; }
 
