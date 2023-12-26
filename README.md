@@ -2,7 +2,7 @@
 
 **hora-certa-api** é uma aplicação REST que visa facilitar o gerenciamento de dados de horas trabalhadas. Isto é, se você controla seu próprio horário de serviço, essa é a plataforma ideal para gerenciamento dos seus horários.
 
-A função dessa aplicação é o armazenamento de horas trabalhadas, tal como a geração de estatísticas personalizadas de folgas, férias e horários trabalhados.
+Esta aplicação foi projetada para armazenar horas trabalhadas e gerar estatísticas personalizadas para intervalos, férias e horas de trabalho..
 
 ## Padões de projeto:
 
