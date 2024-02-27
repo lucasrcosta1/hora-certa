@@ -36,7 +36,7 @@ Este comando constroe a aplicação e inicia o container de banco de dados.
 
 Para acessar a aplicação após subir o docker, vá em:
 
-http://localhost:8999/swagger-ui/index.html
+http://localhost:8080/swagger-ui/index.html
 
 
 ## Tech stack
