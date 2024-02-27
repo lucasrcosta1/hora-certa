@@ -1,0 +1,19 @@
+version: '3'
+services:
+  historian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: historian
+    image: historian
+    ports:
+      - "6060:6060"
+    environment:
+      - SPRING_PROFILES_ACTIVE=production
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      name: bluenetwork
