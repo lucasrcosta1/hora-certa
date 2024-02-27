@@ -1,19 +1,19 @@
 version: '3'
 services:
-  historian:
+  hora-certa:
     build:
       context: .
+      args:
+        - ENV=$ENV
       dockerfile: Dockerfile
-    container_name: historian
-    image: historian
+    container_name: hora-certa
+    image: hora-certa
     ports:
-      - "6060:6060"
-    environment:
-      - SPRING_PROFILES_ACTIVE=production
-    networks:
-      - default
-
-networks:
-  default:
-    external:
-      name: bluenetwork
+      - "8080:8080"
+#    networks:
+#      - default
+#
+#networks:
+#  default:
+#    external:
+#      name: bluenetwork
